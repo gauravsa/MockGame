@@ -13,21 +13,30 @@ module.exports = function(system){
 		endgame: function(username, gameid, score, callback) {
 			var redisArgs = ['leaderboard', score, username];
 			dbConn.collection("games").findOne({'_id':new ObjectID(gameid)}, function(err, doc) {
-				console.log("doc: " + doc);
 				if(err) {
 					callback({"errmsg":"game:" + gameid + " not found"},null);
-					return;
 				} else if(doc === null) {
 					callback({"errmsg":"game:" + gameid + " does not exist"}, null);
 				} else if(doc['score'] != null) {
 					callback({"errmsg":"game: " + gameid + " already ended"}, null);
 				}else {
 					redisClient.zincrby(redisArgs, function(err, res){
-								if(err) {
+						if(err) {
+							console.log(err);
+						} else {
+							var rankArgs = ['leaderboard', username];
+							redisClient.zrevrank(rankArgs, function(err, rank){
+								if(rank === null){
 									console.log(err);
-								}
+								} else{
+									dbConn.collection('users').update({'username': username},{$set:{"rank": rank}, $inc:{"score": parseInt(score)}});						
+								}				
 							});
-					dbConn.collection('users').update({'username': username},{$inc:{"score": parseInt(score)}});
+						}
+					});
+
+					
+			
 					dbConn.collection('games').updateOne({'_id':new ObjectID(gameid)},{$set:{"score": parseInt(score)}}, callback);
 				}
 			});
@@ -36,7 +45,6 @@ module.exports = function(system){
 		getLeaderBoard: function(callback) {
 			var rangeArgs = ['leaderboard', 0, 9];
 			redisClient.zrevrange(rangeArgs, function(err, users){
-				console.log(users);
 				var leaderBoard = [];
 				async.each(users,function(username, asynCallback) {
 					var scoreArgs = ['leaderboard', username]
@@ -62,7 +70,6 @@ module.exports = function(system){
 		getLeaderBoardByUsername: function(username, callback) {
 			var rankArgs = ['leaderboard', username];
 			redisClient.zrevrank(rankArgs, function(err, rank){
-				console.log(rank);
 				if(rank === null){
 					callback(null);
 				}
