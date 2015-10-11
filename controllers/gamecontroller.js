@@ -48,13 +48,22 @@ module.exports = function(system){
 		},
 		getLeaderBoardByUsername: function(username, callback) {
 			var rankArgs = ['leaderboard', username];
-			redisClient.zrank(rankArgs, function(err, rank){
+			redisClient.zrevrank(rankArgs, function(err, rank){
 				console.log(rank);
+				if(!rank){
+					callback(null);
+				}
 				var start = rank - 5;
 				var end = rank + 4
+				console.log("start:" + start + "end: " + end);
+				if(start<0) {
+					end += Math.abs(start);
+					start = 0;
+				}
+				console.log("start:" + start + "end: " + end);
 				var rangeArgs = ['leaderboard', start, end];
 				redisClient.zrevrange(rangeArgs, function(err, users){
-					console.log(users);
+					
 					var leaderBoard = [];
 					async.each(users, function(username, asynCallback){
 						var scoreArgs = ['leaderboard', username]
