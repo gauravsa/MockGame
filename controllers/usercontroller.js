@@ -10,7 +10,7 @@ module.exports = function(system){
 			user['rank'] = 0;
 			dbConn.collection('users').insertOne(user, callback);
 			var redisArgs = ['leaderboard', 0, username];
-			redisClient.zincby(redisArgs, function(err, res){
+			redisClient.zadd(redisArgs, function(err, res){
 						if(err) {
 							console.log(err);
 						}
