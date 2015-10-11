@@ -1,4 +1,7 @@
 {
+	"service": {
+		"port": 8000
+		},
 	"mongo": {
 		"url": "mongodb://localhost:27017/mockgame"
 	},

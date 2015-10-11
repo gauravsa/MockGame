@@ -10,15 +10,10 @@ module.exports = function(system, callback){
 				console.log(err);
 			} else {
 				if(doc) {
-					console.log(doc);
-					
 					var redisArgs = ['leaderboard', doc['score'] , doc['username']];
-					console.log("redisArgs" + redisArgs);
 					redisClient.zadd(redisArgs, function(err, res){
 						if(err) {
 							console.log(err);
-						}else {
-							console.log(res);
 						}
 					});
 				}

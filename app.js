@@ -24,7 +24,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
 app.get('/', routes.index);
-app.get('/users', user.list);
 app.get('/adduser/:username/:age', user.adduser);
 app.get('/getuser/:username', user.getuser);
 app.get('/creategame/:username', game.creategame);

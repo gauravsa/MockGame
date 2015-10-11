@@ -20,7 +20,7 @@ exports.endgame = function(req, res) {
 	var score = req.param('score');
 	system.controllers.gameController.endgame(username, gameid, score, function(err, record){
 		if(err) {
-			res.status(200).json({"error": err["errmsg"]});
+			res.status(404).json({"error": err["errmsg"]});
 		} else {
 			res.status(200).json({"msg": "gamecompleted"});
 		}
@@ -32,7 +32,7 @@ exports.getLeaderBoard = function(req, res) {
 		if(leaderBoard) {
 			res.status(200).json(leaderBoard);
 		} else {
-			res.status(200).json({"msg": "leaderBoard not available"});
+			res.status(404).json({"msg": "leaderBoard not available"});
 		}
 	});
 }
@@ -43,7 +43,7 @@ exports.getLeaderBoardByUsername = function(req, res) {
 		if(leaderBoard) {
 			res.status(200).json(leaderBoard);
 		} else {
-			res.status(200).json({"msg": "leaderBoard not available"});
+			res.status(404).json({"msg": "leaderBoard not available"});
 		}
 	});
 } 
